@@ -1,0 +1,25 @@
+{
+  "name": "Reportage Test Helper",
+  "version": "0.1.0",
+  "manifest_version": 3,
+  "description": "Test Helper extension for Reportage",
+  "permissions": [
+    "browsingData",
+    "storage",
+    "unlimitedStorage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "run_at": "document_start",
+      "all_frames": false,
+      "js": ["content-script.js"]
+    }
+  ],
+  "action": {
+    "default_icon": "reportage-icon.png"
+  }
+}

@@ -1,0 +1,15 @@
+node_modules
+test/coverage*
+test/instrumented
+test/log/*.log
+**/mochawesome-report
+coverage
+.nyc_output
+.vscode
+reportage-*.tgz
+resolved-paths.js
+nginx.pid
+nginx-dist.pid
+cli.js
+docs
+keys

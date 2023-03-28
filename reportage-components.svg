@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <rect x="-0.45" y="100" width="500.45" height="315.81" style="stroke: rgb(0, 0, 0); fill: rgb(216, 216, 216);" rx="5" ry="5"/>
+  <path d="M 147.1 448.79 H 195.68 L 195.68 443.44 L 209.82 450.31 L 195.68 457.18 L 195.68 451.82 H 147.1 V 448.79 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(0.999999, -0.001013, 0.001013, 0.999999, 52.471504, -208.799683)" bx:shape="arrow 147.1 443.44 62.72 13.74 3.03 14.14 0 1@569682df"/>
+  <path d="M 137.56 448.79 H 186.58 L 186.58 443.44 L 200.72 450.31 L 186.58 457.18 L 186.58 451.82 H 137.56 V 448.79 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(-0.999995, -0.0031, 0.0031, -0.999995, 399.373291, 723.907471)" bx:shape="arrow 137.56 443.44 63.16 13.74 3.03 14.14 0 1@730a137b"/>
+  <path d="M 147.1 448.8 H 164.83 L 164.83 443.44 L 178.97 450.31 L 164.83 457.18 L 164.83 451.83 H 147.1 V 448.8 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(-0.004007, -0.999992, 0.999992, -0.004007, -178.545685, 538.649048)" bx:shape="arrow 147.1 443.44 31.87 13.74 3.03 14.14 0 1@9de599af"/>
+  <path d="M 147.1 448.8 H 164.83 L 164.83 443.44 L 178.97 450.31 L 164.83 457.18 L 164.83 451.83 H 147.1 V 448.8 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(0.004007, 0.999992, -0.999992, 0.004007, 631.866516, 202.135635)" bx:shape="arrow 147.1 443.44 31.87 13.74 3.03 14.14 0 1@9de599af"/>
+  <path d="M 98.1 445.29 H 181.8 L 181.8 430.32 L 223.32 450.29 L 181.8 470.26 L 181.8 455.29 H 98.1 V 445.29 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(0.009252, -0.999957, 1.000049, -0.000649, -72.348846, 275.929138)" bx:shape="arrow 98.1 430.32 125.22 39.94 10 41.52 0 1@98d230d3"/>
+  <path d="M 96.35 445.29 H 180.39 L 180.39 430.32 L 221.59 450.29 L 180.39 470.26 L 180.39 455.29 H 96.35 V 445.29 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(0.003637, -0.999993, 1.000029, -0.006265, -320.416809, 276.719849)" bx:shape="arrow 96.35 430.32 125.24 39.94 10 41.2 0 1@a32e864c"/>
+  <path d="M 55.88 445.29 H 214.77 L 214.77 430.32 L 256.29 450.29 L 214.77 470.26 L 214.77 455.29 H 55.88 V 445.29 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(-0.777085, -0.629396, 0.621704, -0.783315, 84.511772, 566.798218)" bx:shape="arrow 55.88 430.32 200.41 39.94 10 41.52 0 1@d08dbaea"/>
+  <rect x="14.58" y="21.35" width="185.42" height="30.97" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" rx="5" ry="5"/>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 25.5px;" x="23.71" y="44.58">reporter server</text>
+  <rect x="266.13" y="20.44" width="185.42" height="30.97" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" rx="5" ry="5"/>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 25.5px;" x="300" y="43.21">app server</text>
+  <rect x="297.97" y="200" width="185.43" height="185.65" style="stroke: rgb(0, 0, 0); fill: rgb(241, 236, 236);" rx="5" ry="5"/>
+  <rect x="282.04" y="186.72" width="185.43" height="185.65" style="stroke: rgb(0, 0, 0); fill: rgb(241, 236, 236);" rx="5" ry="5"/>
+  <rect x="264.01" y="171.31" width="185.43" height="185.65" style="stroke: rgb(0, 0, 0); fill: rgb(241, 236, 236);" rx="5" ry="5"/>
+  <rect x="14.57" y="170.4" width="185.43" height="185.65" style="stroke: rgb(0, 0, 0); fill: rgb(241, 236, 236);" rx="5" ry="5"/>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 25.5px;" x="59.65" y="194.54">reporter</text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 25.5px;" x="333.3" y="194.54">app</text>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 25.5px;" x="9.32" y="123.22">browser</text>
+  <rect y="453.17" width="179.51" height="30.43" style="stroke: rgb(0, 0, 0); fill: rgb(241, 236, 236);" x="20.49" rx="5" ry="5"/>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 25.5px;" x="33.59" y="476.78">reportage CLI</text>
+  <path d="M 83.36 445.31 H 137.6 L 137.6 430.31 L 178.97 450.31 L 137.6 470.31 L 137.6 455.31 H 83.36 V 445.31 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(-0.004926, -0.999988, 0.999988, -0.004926, -381.575958, 538.15033)" bx:shape="arrow 83.36 430.31 95.61 40 10 41.37 0 1@9a8d1856"/>
+  <path d="M 83.36 445.31 H 137.6 L 137.6 430.31 L 178.97 450.31 L 137.6 470.31 L 137.6 455.31 H 83.36 V 445.31 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(0.004926, 0.999988, -0.999988, 0.004926, 595.833313, 270.483948)" bx:shape="arrow 83.36 430.31 95.61 40 10 41.37 0 1@9a8d1856"/>
+  <text style="fill: rgb(137, 123, 123); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="23.4" y="437.94">open</text>
+  <text style="fill: rgb(137, 123, 123); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="163.9" y="438.26">mocha events (aggregated)</text>
+  <rect y="452.86" width="162.66" height="30.43" style="stroke: rgb(0, 0, 0); fill: rgb(241, 236, 236);" x="300" rx="5" ry="5"/>
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 25.5px;" x="334.61" y="475.35">reporter</text>
+  <path d="M 83.36 445.31 H 137.6 L 137.6 430.31 L 178.97 450.31 L 137.6 470.31 L 137.6 455.31 H 83.36 V 445.31 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(0.999988, -0.004926, 0.004926, 0.999988, 114.521301, 17.504032)" bx:shape="arrow 83.36 430.31 95.61 40 10 41.37 0 1@9a8d1856"/>
+  <text style="fill: rgb(137, 123, 123); font-family: Arial, sans-serif; white-space: pre;" x="400" y="78.5">app requests</text>
+  <text style="fill: rgb(137, 123, 123); font-family: Arial, sans-serif; white-space: pre;" transform="matrix(1, 0, 0, 1, -3.642987, -8.652094)"><tspan x="214.38" y="81.23">driver.js &amp; test suites</tspan><tspan x="214.38" dy="1em">​</tspan><tspan>       (CORS)</tspan></text>
+  <text style="fill: rgb(137, 123, 123); font-family: Arial, sans-serif; white-space: pre;" x="44.52" y="81.23">reporter.js</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="270.71" y="228.32" transform="matrix(1, 0, 0, 1, 11.821494, 103.825134)">inject<tspan x="270.7099914550781" dy="1em">​</tspan>&lt;script src="driver.js"&gt;</text>
+  <rect x="174.39" y="384.21" width="105.29" height="15.79" style="stroke: rgb(0, 0, 0); fill: rgb(241, 236, 236);" rx="5" ry="5"/>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="194.12" y="396.81">extension</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="32.95" y="222.85">HTML reporter<tspan x="32.95000076293945" dy="1em">​</tspan>Scope 1<tspan x="32.95000076293945" dy="1em">​</tspan>  Suite X<tspan x="32.95000076293945" dy="1em">​</tspan>    ✔ test A<tspan x="32.95000076293945" dy="1em">​</tspan>    ✔ test B<tspan x="32.95000076293945" dy="1em">​</tspan>  Suite Y<tspan x="32.95000076293945" dy="1em">​</tspan>    ✔ test C<tspan x="32.95000076293945" dy="1em">​</tspan>Scope 2<tspan x="32.95000076293945" dy="1em">​</tspan>   ...<tspan x="32.95000076293945" dy="1em">​</tspan><tspan x="32.95000076293945" dy="1em">​</tspan></text>
+  <rect x="149.31" y="134.14" width="85.25" height="15.79" style="stroke: rgb(0, 0, 0); fill: rgb(241, 236, 236);" transform="matrix(0, 1, -1, 0, 373.171448, 65.440002)" rx="5" ry="5"/>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="161.43" y="146.81" transform="matrix(0, 1, -1, 0, 373.171448, 65.440002)">mediator</text>
+  <path d="M 136.65 448.79 H 186.58 L 186.58 443.44 L 200.72 450.31 L 186.58 457.18 L 186.58 451.82 H 136.65 V 448.79 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(-0.999938, 0.011159, -0.011159, -0.999938, 405.782593, 770.655212)" bx:shape="arrow 136.65 443.44 64.07 13.74 3.03 14.14 0 1@2fa4a885"/>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="209.18" y="343.98">mocha<tspan x="209.17999267578125" dy="1em">​</tspan>events</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="200" y="196.81" transform="matrix(1, 0, 0, 1, 3, 0)">dispatch<tspan x="200" dy="1em">​</tspan>  suites</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="19.88" y="143.16">headed or<tspan x="19.8799991607666" dy="1em">​</tspan>headless</text>
+  <text style="fill: rgb(137, 123, 123); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="74" y="449.16">puppeteer</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="269.05" y="186.34">top frame</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="300" y="228.32" transform="matrix(1, 0, 0, 1, 3, 7)">SPA &amp; non-SPA<tspan x="300" dy="1em">​</tspan></text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="418.21" y="167.3">concurrent</text>
+  <rect x="322.14" y="277.68" width="62.19" height="22.32" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" rx="5" ry="5"/>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="334.16" y="293.19">suites</text>
+  <path d="M 147.1 448.8 H 164.83 L 164.83 443.44 L 178.97 450.31 L 164.83 457.18 L 164.83 451.83 H 147.1 V 448.8 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(-0.004007, -0.999992, 0.999992, -0.004007, -109.033821, 480.800507)" bx:shape="arrow 147.1 443.44 31.87 13.74 3.03 14.14 0 1@9de599af"/>
+  <path d="M 147.1 448.8 H 164.83 L 164.83 443.44 L 178.97 450.31 L 164.83 457.18 L 164.83 451.83 H 147.1 V 448.8 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(-0.004007, -0.999992, 0.999992, -0.004007, -94.917252, 425.350311)" bx:shape="arrow 147.1 443.44 31.87 13.74 3.03 14.14 0 1@9de599af"/>
+  <path d="M 147.1 448.8 H 164.83 L 164.83 443.44 L 178.97 450.31 L 164.83 457.18 L 164.83 451.83 H 147.1 V 448.8 Z" style="stroke: rgb(0, 0, 0); fill: rgb(149, 163, 150);" transform="matrix(0.004007, 0.999992, -0.999992, 0.004007, 815.773315, 151.124298)" bx:shape="arrow 147.1 443.44 31.87 13.74 3.03 14.14 0 1@9de599af"/>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="309.85" y="313.66">run</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="375.32" y="313.66">results</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="292" y="266.75">operate</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="366.82" y="266.2">check</text>
+</svg>

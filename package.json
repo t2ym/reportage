@@ -1,0 +1,57 @@
+{
+  "name": "reportage",
+  "version": "0.0.1",
+  "description": "Scenarist-wrapped mocha sessions on browsers to any reporters",
+  "main": "cli.mjs",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t2ym/reportage.git"
+  },
+  "homepage": "https://github.com/t2ym/reportage#readme",
+  "bin": {
+    "reportage": "./cli.mjs"
+  },
+  "scripts": {
+    "postinstall": "node --experimental-import-meta-resolve postinstall.js",
+    "start": "nginx -p . -c nginx.conf",
+    "stop": "kill -3 `cat nginx.pid`",
+    "pretest": "npm run instrument",
+    "instrument": "npx nyc instrument . test/instrumented/ && node patchInstrumentedExtension.js && cp -v extension/chrome/manifest.json test/instrumented/extension/chrome/manifest.json && cp -v extension/chrome/*.png test/instrumented/extension/chrome/ && sed -e 'sXproxy-reporter.jsXtest/instrumented/proxy-reporter.jsX' test/instrumented/cli.mjs >cli.js",
+    "test": "npx mocha --timeout=60000 test/meta-suites.mjs",
+    "test:raw": "node cli.js --import ./test/reporter-test.mjs test/reportage.config.js test/*/reportage.config.js",
+    "test1": "npm run instrument && node cli.js ",
+    "posttest": "npx nyc report",
+    "dot": "cd docs && for i in reporter; do { dot -Tsvg ${i}.dot -o ${i}.svg; } done && cd .."
+  },
+  "keywords": [
+    "mocha",
+    "scenarist",
+    "reporter",
+    "puppeteer",
+    "coverage",
+    "e2e"
+  ],
+  "author": "Tetsuya Mori <t2y3141592@gmail.com>",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "@esm-bundle/chai": "^4.3.4-fix.0",
+    "istanbul-lib-coverage": "^3.2.0",
+    "istanbul-lib-report": "^3.0.0",
+    "istanbul-reports": "^3.1.5",
+    "mocha": "^10.2.0",
+    "puppeteer": "^19.6.0",
+    "scenarist": "1.1.10",
+    "yargs": "^17.7.0"
+  },
+  "devDependencies": {
+    "@web/dev-server": "^0.1.35",
+    "argparse": "^2.0.1",
+    "cluster": "^0.7.7",
+    "express": "^4.18.2",
+    "express-static-gzip": "^2.1.7",
+    "mochawesome": "^7.1.3",
+    "nyc": "^15.1.0",
+    "serve": "^14.2.0"
+  }
+}
