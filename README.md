@@ -5,7 +5,7 @@
 [scenarist](https://github.com/t2ym/scenarist)-wrapped mocha sessions on browsers to any reporters
 
 <p align="center">
-  <img width="80%" src="reportage-components.svg">
+  <img width="80%" src="https://raw.githubusercontent.com/wiki/t2ym/reportage/reportage-components.svg?sanitize=true">
   <p align="center">Component Diagram</p>
 </p>
 
