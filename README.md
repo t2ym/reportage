@@ -600,6 +600,7 @@ const Config = {
   },
   timeout: 5 * 1000, // 5sec
   readyTimeout: 5 * 1000, // 5sec
+  readyTimeoutRetries: 2, // 2 retries
   mediatorPortTimeout: 5 * 1000, // 5sec
   beaconTimeout: 5 * 1000, // 5sec
   setupInjectionTimeout: 1000, // 1sec
