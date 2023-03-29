@@ -218,8 +218,8 @@ const Config = {
     return new URL(this._scenaristLoaderScriptRelativeToReportage, new URL(this.reportagePackagePath, this.configURL).href).pathname;
   },
   timeout: 5 * 1000, // 5sec
-  readyTimeout: 5 * 1000, // 5sec
-  mediatorPortTimeout: 5 * 1000, // 5sec
+  readyTimeout: 15 * 1000, // 15sec
+  mediatorPortTimeout: 1 * 1000, // 1sec
   beaconTimeout: 5 * 1000, // 5sec
   setupInjectionTimeout: 1000, // 1sec
   dispatcherStartInterval: 50, // 50ms - insert a wait between dispatcher start events
