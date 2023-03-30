@@ -8,15 +8,15 @@ const { default: Suite } = await import(Config.scenaristLoaderPath);
 const { default: chai } = await import(Config.resolve('@esm-bundle/chai/esm/chai.js'));
 if (location.origin !== Config.reporterOrigin &&
     new URL(location.href).pathname === '/test/mocha2.html') {
-  const SESSION_STORAGE_READY_TIMEOUT_FAIL_COUNTER = 'SessionStorage:failcounter';
+  const LOCAL_STORAGE_READY_TIMEOUT_FAIL_COUNTER = 'LocalStorage:failcounter';
   const MAX_FAILURES = 1;
-  let counter = parseInt(sessionStorage.getItem(SESSION_STORAGE_READY_TIMEOUT_FAIL_COUNTER) || '0');
+  let counter = parseInt(localStorage.getItem(LOCAL_STORAGE_READY_TIMEOUT_FAIL_COUNTER) || '0');
   if (counter < MAX_FAILURES) {
     counter++;
     console.log(`ready-timeout-suite.js: counter ${counter}`);
-    sessionStorage.setItem(SESSION_STORAGE_READY_TIMEOUT_FAIL_COUNTER, counter);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    await import('./inexistent-module.js');
+    localStorage.setItem(LOCAL_STORAGE_READY_TIMEOUT_FAIL_COUNTER, counter);
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    //await import('./inexistent-module.js');
   }
   else {
     //sessionStorage.removeItem(SESSION_STORAGE_READY_TIMEOUT_FAIL_COUNTER);

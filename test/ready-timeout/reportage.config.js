@@ -156,6 +156,7 @@ const Config = {
           // filterable by origins/hostnames
           cache: true, // The browser's cache.
           sessionStorage: true,
+          localStorage: true,
         },
         end: { // only once per run
           // non-filterable by origins/hostnames - Be aware that other apps with the same user profile are affected as well
@@ -180,7 +181,7 @@ const Config = {
           cache: false, // The browser's cache.
           fileSystems: true, // Websites' file systems.; not on Firefox
           indexedDB: true, // Websites' IndexedDB data.
-          localStorage: true, // Websites' local storage data.
+          localStorage: false, // Websites' local storage data.
           cacheStorage: true, // Cache storage
           serviceWorkers: true, // Service Workers.
           webSQL: false, // [DEPRECATED FEATURE] Websites' WebSQL data.
