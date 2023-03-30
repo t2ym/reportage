@@ -2573,8 +2573,10 @@ try {
           const reason = `${this.state}.timeout: timeout for receiving ready`;
           if (this.suiteParameters && this.suiteParameters.phase > 0) {
             console.error(reason);
-            let timestamp = this.navigatingTimestamp;
+            // Fix #3 CLOSED state must be transitioned synchronously; timestamp is unused as described in the following Note
+            // let timestamp = this.navigatingTimestamp;
             try {
+              /* Fix #3 CLOSED state must be transitioned synchronously; result is unused as described in the following Note
               let result = await this.constructor.getNavigationUrl(this.origin, 1000);
               if (timestamp <= result.values[this.origin].timestamp) {
                 console.log(`${this.state}.timeout: navigation url found ${result.values[this.origin].url}`);
@@ -2582,6 +2584,7 @@ try {
               else {
                 console.warn(`${this.state}.timeout: no navigation url available after timestamp for origin ${this.origin}`);
               }
+              */
               // Note: Do NOT use the current url of the target window 
               //   since sessionStorage cannot be inherited to the reopened window
               //   Instead, the suite is reset to its phase 0 when a new window is opened for the origin
@@ -2589,8 +2592,9 @@ try {
               this.readyTimeoutRetryCount = this.readyTimeoutRetryCount || 0;
               if (this.readyTimeoutRetryCount < Config.readyTimeoutRetries) {
                 this.readyTimeoutRetryCount++;
+                this.state = DISPATCHER_STATE_CLOSED; // Fix #3 In CLOSED state, discard delayed READY after timeout
                 setTimeout(() => {
-                  this.reopen(); // TODO: more reliable method
+                  this.reopen();
                 }, 1000);
               }
               else {
@@ -2610,8 +2614,9 @@ try {
             this.readyTimeoutRetryCount = this.readyTimeoutRetryCount || 0;
             if (this.readyTimeoutRetryCount < Config.readyTimeoutRetries) {
               this.readyTimeoutRetryCount++;
+              this.state = DISPATCHER_STATE_CLOSED; // Fix #3 In CLOSED state, discard delayed READY after timeout
               setTimeout(() => {
-                this.open(this.suite); // TODO: more reliable method
+                this.open(this.suite);
               }, 1000);
             }
             else {
@@ -2726,6 +2731,16 @@ try {
           this.closed();
           break;
         }        
+        break;
+      case DISPATCHER_STATE_CLOSED:
+        switch (type) {
+        case TYPE_READY:
+          // Fix #3 In CLOSED state, discard delayed READY after timeout
+          console.warn(`${this.state}.onMessage: discarding delayed ${type}`);
+          break;
+        default:
+          break;
+        }
         break;
       default:
         break;
