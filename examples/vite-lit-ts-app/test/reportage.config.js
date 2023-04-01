@@ -237,6 +237,17 @@ const Config = {
     timeout: 5000,
     consoleReporter: 'list',
   },
+  screenshotOptions: {
+    enabled: true,
+    exposedFunction: 'takeScreenshot',
+    timeout: 1000,
+    max_retries: 3,
+    options: {
+      // https://pptr.dev/api/puppeteer.screenshotoptions
+      format: 'png',
+      fullPage: true,
+    },
+  },
   coverageOptions: {
     enabled: true,
   },

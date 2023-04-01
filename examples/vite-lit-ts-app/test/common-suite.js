@@ -56,9 +56,40 @@ common.test = class CommonSuite extends Suite {
         value: testURL,
       },
     ];
+    if (Config.screenshotOptions &&
+        Config.screenshotOptions.enabled &&
+        typeof window[Config.screenshotOptions.exposedFunction] === 'function') {
+      const screenshotURL = this.screenshotURL(_this);
+      _this.currentTest.context.push(
+        {
+          title: 'screenshot',
+          value: screenshotURL,
+        },
+      );
+    }
   }
   async afterEach(_this) {
     // _this.currentTest.state == 'passed', 'failed', 'pending'
+    switch (_this.currentTest.state) {
+    case 'passed':
+    case 'failed':
+      if (Config.screenshotOptions &&
+          Config.screenshotOptions.enabled &&
+          typeof window[Config.screenshotOptions.exposedFunction] === 'function') {
+        const screenshotURL = this.screenshotURL(_this);
+        let result = await window[Config.screenshotOptions.exposedFunction]({
+          type: 'screenshot',
+          screenshotURL: screenshotURL,
+        });
+        if (result !== 'done') {
+          throw new Error(`afterEach: onScreenshot result is not 'done' for ${screenshotURL}`);
+        }
+      }
+      break;
+    case 'pending':
+    default:
+      break;
+    }
   }
   nextPhase() {
     if (typeof this.phase !== 'number') {
@@ -105,6 +136,15 @@ common.test = class CommonSuite extends Suite {
       `&testIndex=${encodeURIComponent(this.target.suite.testIndex)}` +
       `&testClass=${encodeURIComponent(this.constructor.name)}` +
       `&testStep=${this.step}`;
+  }
+  screenshotURL(_this) {
+    return new URL(`assets/` +
+      `${encodeURIComponent(this.target.suite.scope)}` +
+      `@${encodeURIComponent(this.target.suite.testIndex)}` +
+      `@${encodeURIComponent(this.constructor.name)}` +
+      `@${this.step}` +
+      `.png`,
+      new URL(Config.consoleReporterOptions.reportDir, Config.reporterOrigin)).href;
   }
   addContext(testObj, context) {
     if (!testObj.test.context) {

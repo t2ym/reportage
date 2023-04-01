@@ -5,7 +5,7 @@
   "type": "module",
   "types": "types/my-element.d.ts",
   "scripts": {
-    "postinstall": "npm pack ../..; npm i --save-dev reportage-*.tgz; rm -v reportage-*.tgz",
+    "postinstall": "npm pack ../..; npm pack ../../plugins/reportage-screenshot; npm i --save-dev reportage-*.tgz; rm -v reportage-*.tgz",
     "dev": "vite --host 0.0.0.0 --port 3001 --strictPort",
     "dev:coverage": "vite --mode coverage --host 0.0.0.0 --port 3001 --strictPort",
     "build": "tsc && vite build",
@@ -13,6 +13,7 @@
     "preview": "vite preview --host 0.0.0.0 --port 3001 --strictPort",
     "pretest": "rm -rfv ./.nyc_output/*",
     "test": "reportage test/reportage.config.js",
+    "test:screenshot": "npm test -- --import reportage-screenshot",
     "posttest": "if [ -f ./.nyc_output/out.json ]; then npx nyc report; fi",
     "reporter:start": "nginx -p . -c nginx.conf",
     "reporter:stop": "kill -3 `cat nginx.pid`",
@@ -25,7 +26,8 @@
   "devDependencies": {
     "@babel/core": "^7.21.0",
     "nyc": "^15.1.0",
-    "reportage": "file:reportage-0.0.1.tgz",
+    "reportage": "file:reportage-0.0.3.tgz",
+    "reportage-screenshot": "file:reportage-screenshot-0.0.1.tgz",
     "rollup-plugin-istanbul": "^4.0.0",
     "typescript": "^4.9.3",
     "vite": "^4.1.0"

@@ -55,6 +55,8 @@ npm run dist:start
 ### Run CLI test
 ```sh
 npm test
+# CLI test with screenshots
+npm run test:screenshot
 ```
 
 ### Open HTML reports
