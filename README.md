@@ -778,7 +778,7 @@ export default Config;
 
 ## ToDos
 
-- screenshot
+- [x] screenshot
 - pause-before-replay option for debugging
 - browser support
 - TBD
