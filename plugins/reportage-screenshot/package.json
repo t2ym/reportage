@@ -1,0 +1,28 @@
+{
+  "name": "reportage-screenshot",
+  "version": "0.0.1",
+  "description": "screenshot plugin for reportage",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tetsuya Mori <t2y3141592@gmail.com>",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t2ym/reportage.git"
+  },
+  "homepage": "https://github.com/t2ym/reportage/tree/main/plugins/reportage-screenshot#readme",
+  "bin": {
+  },
+  "keywords": [
+    "mocha",
+    "scenarist",
+    "reporter",
+    "puppeteer",
+    "screenshot",
+    "e2e",
+    "reportage"
+  ]
+}
