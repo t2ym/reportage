@@ -18,7 +18,7 @@ npm i --save-dev reportage-screenshot
 
 Add `npm run test:screenshot` script
 
-```json
+```js
 {
   ...
   "scripts": {
@@ -37,6 +37,22 @@ Add `Config.screenshotOptions` in sync with `consoleReporter`, `consoleReporterO
 
 ```js
 const Config = {
+  // Optional experimental alternative windowFeatures property definition to parallelize screenshot taking
+  // The effect is not very significant for png images compared to low quality jpeg images
+  // If test duration becomes longer, the parallelization effect becomes insignificant, anyway
+  /*
+  get windowFeatures() {
+    if (this.screenshotOptions &&
+        this.screenshotOptions.enabled &&
+        this.puppeteerLaunchOptions.headless === 'new' &&
+        typeof takingScreenshots === 'function') {
+      return 'noopener,noreferrer,popup';
+    }
+    else {
+      return 'noopener,noreferrer';
+    }
+  },
+  */
   ...
   consoleReporter: 'mochawesome',
   consoleReporterOptions: {
