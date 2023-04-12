@@ -45,13 +45,7 @@
     "yargs": "^17.7.0"
   },
   "devDependencies": {
-    "@web/dev-server": "^0.1.35",
-    "argparse": "^2.0.1",
-    "cluster": "^0.7.7",
-    "express": "^4.18.2",
-    "express-static-gzip": "^2.1.7",
     "mochawesome": "^7.1.3",
-    "nyc": "^15.1.0",
-    "serve": "^14.2.0"
+    "nyc": "^15.1.0"
   }
 }
