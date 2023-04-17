@@ -217,6 +217,7 @@ const Config = {
   get scenaristLoaderPath() {
     return new URL(this._scenaristLoaderScriptRelativeToReportage, new URL(this.reportagePackagePath, this.configURL).href).pathname;
   },
+  importOnlyTargetScope: true, // for performance
   timeout: 2 * 60 * 1000, // 2min
   readyTimeout: 5 * 1000, // 5sec
   readyTimeoutRetries: 2, // 2 retries
