@@ -119,6 +119,7 @@ try {
   retryCount = 0;
   const SESSION_STORAGE_RELOADING = 'SessionStorage:reloading';
   do {
+    if (Config.importOnlyTargetScope) break;
     try {
       const { default: _Suite } = await import(Config.suitesLoaderPath + (retryCount > 0 ? '#' + retryCount : ''));
       Suite = _Suite;
@@ -649,7 +650,7 @@ try {
         this.sendNavigating();
       }
     }
-    startSession(event) {
+    async startSession(event) {
       // start a new mocha session
       // (re-)install mocha and proxy reporter as disposed mocha cannot be reused
       // In a browser, globalThis.mocha object instance is created by mocha-es2018.js and new Mocha() cannot be used for instantiation
@@ -685,7 +686,32 @@ try {
       _globalThis.mocha.reporter('proxy-reporter', this.reporterOptions);
   
       //console.log('============ Suite.scopes[scope].run');
-      const { scope, testIndex } = this.suite;
+      const { scope, testIndex, file } = this.suite;
+      if (!Suite) {
+        if (file) {
+          do {
+            try {
+              const { default: _Suite } = await import(file + (retryCount > 0 ? '#' + retryCount : ''));
+              Suite = _Suite;
+              success = true;
+            }
+            catch (e) {
+              console.error(e);
+            }
+            if (!success) {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              retryCount++;
+              if (retryCount > Config.suitesLoaderRetries) {
+                throw new Error(`failed to import ${file} for scope ${scope} with retryCount ${retryCount - 1}`);
+              }
+            }
+          }
+          while (!success);
+        }
+        else {
+          throw new Error(`file property is not available for scope ${scope}`);
+        }
+      }
       Suite.scopes[scope].run(testIndex, this.suiteParameters, sandbox)
         .then(() => {})
         .catch(error => { throw error }); // use _globalThis.describe, etc.

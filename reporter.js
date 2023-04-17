@@ -291,6 +291,7 @@ try {
           suiteIndex: suiteIndex,
           ui: TEST_UI_SCENARIST,
           scope: scope,
+          file: Suite.scopes[scope].file,
           testIndex: index,
           lastInScope: index + 1 == testList.length,
           tests: tests,
@@ -2549,6 +2550,8 @@ try {
         clearTimeout(this.timeoutId);
       }
       this.timeoutId = 0;
+      this.readyTimeoutRetryCount = 0;
+      this.startSessionTimeoutRetryCount = 0;
     }
     async timeout(timeoutId) {
       switch (this.state) {
@@ -2637,8 +2640,45 @@ try {
         if (timeoutId === this.timeoutId) {
           this.timeoutId = 0; // properly handled timeout
           const reason = `${this.state}.timeout: timeout for receiving startSession`;
-          this.reset(this.state);
-          this.error(reason);
+          if (this.suiteParameters && this.suiteParameters.phase > 0) {
+            console.error(reason);
+            try {
+              this.detach();
+              this.startSessionTimeoutRetryCount = this.startSessionTimeoutRetryCount || 0;
+              if (this.startSessionTimeoutRetryCount < Config.readyTimeoutRetries) {
+                this.startSessionTimeoutRetryCount++;
+                this.state = DISPATCHER_STATE_CLOSED; // discard delayed READY after timeout
+                setTimeout(() => {
+                  this.reopen();
+                }, 1000);
+              }
+              else {
+                this.reset(this.state); // TODO: this handling of error unexpectedly hangs up the test run
+                this.error(reason);
+              }
+            }
+            catch (e) {
+              this.reset(this.state); // TODO: this handling of error unexpectedly hangs up the test run
+              this.error(reason);
+            }
+          }
+          else {
+            // phase 0 -> reopen
+            console.error(reason);
+            this.detach();
+            this.startSessionTimeoutRetryCount = this.startSessionTimeoutRetryCount || 0;
+            if (this.startSessionTimeoutRetryCount < Config.readyTimeoutRetries) {
+              this.startSessionTimeoutRetryCount++;
+              this.state = DISPATCHER_STATE_CLOSED; // discard delayed READY after timeout
+              setTimeout(() => {
+                this.open(this.suite);
+              }, 1000);
+            }
+            else {
+              this.reset(this.state); // TODO: this handling of error unexpectedly hangs up the test run
+              this.error(reason);
+            }
+          }
         }
         else {
           // another timer is running

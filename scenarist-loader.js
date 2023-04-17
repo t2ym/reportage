@@ -13,6 +13,7 @@ const scenaristResponse = await fetch(new URL(Resolved['scenarist/Suite.js'], im
 const scenaristScriptText = await scenaristResponse.text();
 // This patch expects scenarist 1.1.10
 const scenaristScriptText_wrapped = scenaristScriptText
+  .replace("this.scope = target || '';", "this.scope = target || '';this.file = (new Error().stack.split('\\n')[2]).replace(/^ *at ([^(]*):[0-9]*:[0-9]*$$/, '$$1')")
   .replace(/\(typeof ([A-Za-z]+) === 'function' \? ([A-Za-z]+) : ([A-Za-z]+)\)/g,
             "(typeof sandbox.$1 === 'function' ? sandbox.$2 : sandbox.$3)")
   .replace(/.call\(self, parameters\)/g, '.call(self, parameters, this)')
