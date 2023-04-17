@@ -217,14 +217,15 @@ const Config = {
   get scenaristLoaderPath() {
     return new URL(this._scenaristLoaderScriptRelativeToReportage, new URL(this.reportagePackagePath, this.configURL).href).pathname;
   },
+  importOnlyTargetScope: true, // for performance
   timeout: 5 * 1000, // 5sec
-  readyTimeout: 15 * 1000, // 15sec
-  readyTimeoutRetries: 2, // 2 retries
+  readyTimeout: 5 * 1000, // 15sec
+  readyTimeoutRetries: 5, // 5 retries
   mediatorPortTimeout: 1 * 1000, // 1sec
   beaconTimeout: 5 * 1000, // 5sec
   setupInjectionTimeout: 1000, // 1sec
   dispatcherStartInterval: 50, // 50ms - insert a wait between dispatcher start events
-  suitesLoaderRetries: 1, // 2 retries
+  suitesLoaderRetries: 2, // 2 retries
   windowTarget: '_blank',
   windowFeatures: 'noopener,noreferrer',
   mochaOptions: {
