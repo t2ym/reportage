@@ -2550,8 +2550,6 @@ try {
         clearTimeout(this.timeoutId);
       }
       this.timeoutId = 0;
-      this.readyTimeoutRetryCount = 0;
-      this.startSessionTimeoutRetryCount = 0;
     }
     async timeout(timeoutId) {
       switch (this.state) {
@@ -2805,6 +2803,7 @@ try {
     */
     ready0(event) {
       this.clearTimeout();
+      this.readyTimeoutRetryCount = 0;
       const { source, url } = event.data;
       this.pageId = source;
       if (this.url !== '*' && this.url !== url) {
@@ -2819,6 +2818,7 @@ try {
     ready1(event) {
       // TODO: mark this.session finished as the last one in the current suite
       this.clearTimeout();
+      this.readyTimeoutRetryCount = 0;
       const { source, url } = event.data;
       this.pageId = source;
       if (this.url !== url) {
@@ -2831,6 +2831,7 @@ try {
     }
     starting1(event) {
       this.clearTimeout();
+      this.startSessionTimeoutRetryCount = 0;
       const { sessionId } = event.data;
       if (this.session.sessionId !== sessionId) {
         const reason = `${this.state}.starting1: unexpeted sessionId: ${sessionId}, expecting ${this.session.sessionId}`;
