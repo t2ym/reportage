@@ -373,6 +373,8 @@ try {
       let ancestors = [];
       FIND_IMMEDIATE_PARENT_SWITCH:
       switch (this[index].type) {
+      case EVENT_RUN_END:
+        return null;
       case EVENT_SUITE_BEGIN:
         break; // already at the immediate parent
       case EVENT_TEST_FAIL:
@@ -563,9 +565,20 @@ try {
         this.aggregator.onWrite(this, mEvent);
         this.mEvents.done = this.mEvents.current;
       }
+      if (Array.isArray(mEvent)) {
+        if (mEvent[mEvent.length - 1].type === EVENT_RUN_END) {
+          this.onClose();
+        }
+      }
+      else if (mEvent.type === EVENT_RUN_END) {
+        this.onClose();
+      }
     }
     onClose() {
       console.log('Session.onClose()');
+      if (this.state === STATE_STOPPED) {
+        return;
+      }
       this.state = STATE_STOPPED;
       if (this.aggregator) {
         this.aggregator.onClose(this);
@@ -573,7 +586,10 @@ try {
     }
     onAbort(err) {
       console.log('Session.onAbort()');
-      this.supplementFailOnAbort(err);
+      if (!this.supplementFailOnAbort(err)) {
+        console.warn(`Session.onAbort(): no need to abort on a finished session`);
+        return false;
+      }
       if (this.dispatcher) {
         this.dispatcher.detach();
         this.dispatcher.closed();
@@ -592,6 +608,7 @@ try {
         this.dispatcher = null;
         dispatcher.dispatchEvent(new CustomEvent('start', { detail: {} }));
       }
+      return true;
     }
     onReady() {
       console.log(`Session.onReady()`);
@@ -610,6 +627,9 @@ try {
     supplementFailOnAbort(err) {
       console.log('Session.supplementFailOnAbort');
       let ancestors = this.mEvents.findAncestors(this.aggregator);
+      if (!ancestors) {
+        return false;
+      }
       if (ancestors.length > 0 && ancestors[ancestors.length - 1].type === EVENT_RUN_BEGIN) {
         const pseudoEvents = [];
         let index;
@@ -709,6 +729,438 @@ try {
       else {
         console.error('Session.supplementFailOnAbort: no valid ancestors found');
       }
+      return true;
+    }
+    static generatePseudoNextPhaseSessionOnReadyTimeout(dispatcher, error) {
+      const phase = dispatcher.suiteParameters.phase;
+      if (!(typeof phase === 'number' && phase >= 1)) {
+        throw new Error(`Dispatcher.generatePseudoNextPhaseSessionOnReadyTimeout: phase ${phase} must be >= 1`);
+      }
+      const lastSession = dispatcher.constructor.suites[dispatcher.suite.suiteIndex].sessions[phase - 1];
+      let lastNonPendingEventIndex = -1;
+      let lastSuiteBeginIndex = -1;
+      for (let i = 0; i < lastSession.mEvents.length; i++) {
+        switch (lastSession.mEvents[i].type) {
+        case EVENT_RUN_BEGIN:
+        case EVENT_RUN_END:
+          break;
+        case EVENT_SUITE_BEGIN:
+          lastSuiteBeginIndex = i;
+          break;
+        case EVENT_SUITE_END:
+          break;
+        case EVENT_TEST_PASS:
+        case EVENT_TEST_FAIL:
+          lastNonPendingEventIndex = i;
+          break;
+        case EVENT_TEST_PENDING:
+          break;
+        default:
+          break;
+        }
+      }
+      if (lastNonPendingEventIndex < 0) {
+        lastNonPendingEventIndex = lastSuiteBeginIndex;
+      }
+      if (lastNonPendingEventIndex < 0) {
+        throw new Error(`Session.generatePseudoNextPhaseSessionOnReadyTimeout: no last non-pending test found`);
+      }
+      const session = new Session(dispatcher);
+      for (let i = 0; i < lastSession.mEvents.length; i++) {
+        if (i != lastNonPendingEventIndex + 1) {
+          switch (lastSession.mEvents[i].type) {
+          case EVENT_RUN_BEGIN:
+          case EVENT_RUN_END:
+          case EVENT_SUITE_BEGIN:
+          case EVENT_SUITE_END:
+          case EVENT_TEST_PENDING:
+          default:
+            session.mEvents[i] = JSON.parse(JSON.stringify(lastSession.mEvents[i], null, 0));
+            break;
+          case EVENT_TEST_PASS:
+          case EVENT_TEST_FAIL:
+            session.mEvents[i] = JSON.parse(JSON.stringify(lastSession.mEvents[i], null, 0));
+            session.mEvents[i].type = EVENT_TEST_PENDING;
+            break;
+          }
+        }
+        else {
+          switch (lastSession.mEvents[i].type) {
+          case EVENT_RUN_BEGIN:
+          case EVENT_RUN_END:
+          case EVENT_SUITE_BEGIN:
+          case EVENT_SUITE_END:
+          case EVENT_TEST_PASS:
+          case EVENT_TEST_FAIL:
+          default:
+            session.mEvents[i] = JSON.parse(JSON.stringify(lastSession.mEvents[i], null, 0));
+            break;
+          case EVENT_TEST_PENDING:
+            session.mEvents[i] = JSON.parse(JSON.stringify(lastSession.mEvents[i], null, 0));
+            session.mEvents[i].type = EVENT_TEST_FAIL;
+            session.mEvents[i].err = session.mEvents[i].arg.err = {
+              "$$toString": error.toString(),
+              "message": error.message,
+              "stack": error.stack,
+            };
+            break;
+          }
+        }
+      }
+      session.state = STATE_STOPPED;
+      session.phaseState = SESSION_PHASE_STATE_FINAL;
+      session.lastInRun = lastSession.lastInRun;
+      session.lastInScope = lastSession.lastInScope;
+      session.dispatcher = dispatcher;
+      session.aggregator = dispatcher.constructor.aggregator;
+      return session;
+    }
+    static generatePseudoPhase0SessionOnReadyTimeout(dispatcher, error) {
+      const phase = dispatcher.suiteParameters
+        ? dispatcher.suiteParameters.phase
+        : 0;
+      if (!(typeof phase === 'number' && phase === 0)) {
+        throw new Error(`Dispatcher.generatePseudoPhase0SessionOnReadyTimeout: phase ${phase} must be 0`);
+      }
+      const session = new Session(dispatcher);
+      const date = new Date();
+      const now = date.valueOf();
+      const nowISOString = date.toISOString();
+      const reporterURL = new URL(Config.reporterURL);
+      const configPath = (reporterURL.hash.substring(1) || '/test/reportage.config.js').split('?')[0];
+      const url_Root = `${reporterURL.origin}${reporterURL.pathname}${reporterURL.search}#${configPath}`;
+      const url_Scope = url_Root + `?scope=${encodeURIComponent(dispatcher.suite.scope)}`;
+      const rootSuiteMochaID = session.createPseudoMochaId();
+      const scopeSuiteMochaID = session.createPseudoMochaId();
+      const scopeTitle = Suite.scopes[dispatcher.suite.scope].description || dispatcher.suite.scope + ' suite';
+      const testIndex = dispatcher.suite.testIndex;
+      const tests = dispatcher.suite.tests.split(',');
+      const suiteClasses = tests.map(_test => Suite.scopes[dispatcher.suite.scope].classes[_test]);
+      const suiteTitles = suiteClasses.map(_class =>
+        Object.getOwnPropertyDescriptor(_class.prototype, 'description')
+          ? _class.prototype.description
+          : _class.prototype.uncamel(Suite._name(_class)));
+      const url_Tests = tests.map(_test => url_Scope + `&testIndex=${encodeURIComponent(testIndex)}&testClass=${encodeURIComponent(_test)}`);
+      const suiteMochaIDs = tests.map(_test => session.createPseudoMochaId());
+      const mEvents = [
+        {
+          "type": EVENT_RUN_BEGIN,
+          "stats": {
+            "suites": 0,
+            "tests": 0,
+            "passes": 0,
+            "pending": 0,
+            "failures": 0,
+            "start": nowISOString
+          },
+          "timings": {
+            "enqueue": now,
+            "write": now
+          },
+          "arg": {}
+        },
+        {
+          "type": EVENT_SUITE_BEGIN,
+          "stats": {
+            "suites": 0,
+            "tests": 0,
+            "passes": 0,
+            "pending": 0,
+            "failures": 0,
+            "start": nowISOString,
+          },
+          "timings": {
+            "enqueue": now,
+            "write": now
+          },
+          "arg": {
+            "_bail": false,
+            "$$fullTitle": "",
+            "$$isPending": false,
+            "root": true,
+            "title": "",
+            "__mocha_id__": rootSuiteMochaID,
+            "parent": null,
+            "context": [
+              {
+                "title": "suiteURL",
+                "value": url_Root
+              }
+            ]
+          }
+        },
+        {
+          "type": EVENT_SUITE_BEGIN,
+          "stats": {
+            "suites": 0,
+            "tests": 0,
+            "passes": 0,
+            "pending": 0,
+            "failures": 0,
+            "start": nowISOString
+          },
+          "timings": {
+            "enqueue": now,
+            "write": now
+          },
+          "arg": {
+            "_bail": false,
+            "$$fullTitle": scopeTitle,
+            "$$isPending": false,
+            "root": false,
+            "title": scopeTitle,
+            "__mocha_id__": scopeSuiteMochaID,
+            "parent": {
+              "__mocha_id__": rootSuiteMochaID
+            },
+            "context": [
+              {
+                "title": "suiteURL",
+                "value": url_Scope
+              }
+            ]
+          }
+        },
+        ...suiteClasses.map((_testClass, index) => [
+          {
+            "type": EVENT_SUITE_BEGIN,
+            "stats": {
+              "suites": 0,
+              "tests": 0,
+              "passes": 0,
+              "pending": 0,
+              "failures": 0,
+              "start": nowISOString
+            },
+            "timings": {
+              "enqueue": now,
+              "write": now
+            },
+            "arg": {
+              "_bail": false,
+              "$$fullTitle": scopeTitle + " " + suiteTitles[index],
+              "$$isPending": false,
+              "root": false,
+              "title": suiteTitles[index],
+              "__mocha_id__": suiteMochaIDs[index],
+              "parent": {
+                "__mocha_id__": scopeSuiteMochaID
+              },
+              "context": [
+                {
+                  "title": "suiteURL",
+                  "value": url_Tests[index]
+                }
+              ]
+            }
+          },
+          ...[..._testClass.prototype.scenario()].filter(step => step.operation || step.checkpoint).map((step, stepIndex) => {
+            if (stepIndex === 0) {
+              return {
+                "type": EVENT_TEST_FAIL,
+                "stats": {
+                  "suites": 0,
+                  "tests": 0,
+                  "passes": 0,
+                  "pending": 0,
+                  "failures": 0,
+                  "start": nowISOString
+                },
+                "timings": {
+                  "enqueue": now,
+                  "write": now
+                },
+                "arg": {
+                  "$$currentRetry": 0,
+                  "$$fullTitle": scopeTitle + ' ' + suiteTitles[index] + step.name,
+                  "$$isPending": false,
+                  "$$retriedTest": null,
+                  "$$slow": 0,
+                  "$$titlePath": [
+                    scopeTitle,
+                    suiteTitles[index],
+                    step.name
+                  ],
+                  "body": step.ctor.toString(),
+                  "duration": 0,
+                  "err": {
+                    "$$toString": error.toString(),
+                    "message": error.message,
+                    "stack": error.stack
+                  },
+                  "parent": {
+                    "$$fullTitle": scopeTitle + " " + suiteTitles[index],
+                    "__mocha_id__": suiteMochaIDs[index]
+                  },
+                  "state": "failed",
+                  "title": step.name,
+                  "type": "test",
+                  "file": null,
+                  "__mocha_id__": session.createPseudoMochaId(),
+                  "context": []
+                }
+              };
+            }
+            else {
+              return {
+                "type": EVENT_TEST_PENDING,
+                "stats": {
+                  "suites": 0,
+                  "tests": 0,
+                  "passes": 0,
+                  "pending": 1,
+                  "failures": 0,
+                  "start": nowISOString
+                },
+                "timings": {
+                  "enqueue": now,
+                  "write": now
+                },
+                "arg": {
+                  "$$currentRetry": 0,
+                  "$$fullTitle": scopeTitle + ' ' + suiteTitles[index] + step.name,
+                  "$$isPending": true,
+                  "$$retriedTest": null,
+                  "$$slow": 0,
+                  "$$titlePath": [
+                    scopeTitle,
+                    suiteTitles[index],
+                    step.name
+                  ],
+                  "body": step.ctor.toString(),
+                  "duration": 0,
+                  "err": {
+                    "$$toString": step.name,
+                    "actual": "",
+                    "expected": "",
+                    "message": step.name,
+                    "operator": "",
+                    "showDiff": "",
+                    "stack": ""
+                  },
+                  "parent": {
+                    "$$fullTitle": scopeTitle + " " + suiteTitles[index],
+                    "__mocha_id__": suiteMochaIDs[index]
+                  },
+                  "state": "pending",
+                  "title": step.name,
+                  "type": "test",
+                  "file": null,
+                  "__mocha_id__": session.createPseudoMochaId(),
+                  "context": []
+                }
+              };
+            }
+          }),
+          {
+            "type": EVENT_SUITE_END,
+            "stats": {
+              "suites": 0,
+              "tests": 0,
+              "passes": 0,
+              "pending": 0,
+              "failures": 0,
+              "start": nowISOString
+            },
+            "timings": {
+              "enqueue": now,
+              "write": now
+            },
+            "arg": {
+              "_bail": false,
+              "$$fullTitle": scopeTitle + " " + suiteTitles[index],
+              "$$isPending": false,
+              "root": false,
+              "title": suiteTitles[index],
+              "__mocha_id__": suiteMochaIDs[index],
+              "parent": {
+                "__mocha_id__": scopeSuiteMochaID
+              },
+              "context": []
+            }
+          },
+        ]).reduce((acc, curr) => { acc = [...acc, ...curr]; return acc; }, []),
+        {
+          "type": EVENT_SUITE_END,
+          "stats": {
+            "suites": 0,
+            "tests": 0,
+            "passes": 0,
+            "pending": 0,
+            "failures": 0,
+            "start": nowISOString
+          },
+          "timings": {
+            "enqueue": now,
+            "write": now
+          },
+          "arg": {
+            "_bail": false,
+            "$$fullTitle": scopeTitle,
+            "$$isPending": false,
+            "root": false,
+            "title": scopeTitle,
+            "__mocha_id__": scopeSuiteMochaID,
+            "parent": {
+              "__mocha_id__": rootSuiteMochaID
+            },
+            "context": []
+          }
+        },
+        {
+          "type": EVENT_SUITE_END,
+          "stats": {
+            "suites": 0,
+            "tests": 0,
+            "passes": 0,
+            "pending": 0,
+            "failures": 0,
+            "start": nowISOString,
+          },
+          "timings": {
+            "enqueue": now,
+            "write": now
+          },
+          "arg": {
+            "_bail": false,
+            "$$fullTitle": "",
+            "$$isPending": false,
+            "root": true,
+            "title": "",
+            "__mocha_id__": rootSuiteMochaID,
+            "parent": null,
+            "context": []
+          }
+        },
+        {
+          "type": EVENT_RUN_END,
+          "stats": {
+            "suites": 0,
+            "tests": 0,
+            "passes": 0,
+            "pending": 0,
+            "failures": 0,
+            "start": nowISOString
+          },
+          "timings": {
+            "enqueue": now,
+            "write": now
+          },
+          "arg": {
+            "$$fulltitle": ""
+          }
+        }
+      ];
+      for (let mEvent of mEvents) {
+        session.mEvents.push(mEvent);
+      }
+      session.state = STATE_STOPPED;
+      session.phaseState = SESSION_PHASE_STATE_FINAL;
+      session.lastInRun = dispatcher.suite.lastInRun;
+      session.lastInScope = dispatcher.suite.lastInScope;
+      session.dispatcher = dispatcher;
+      session.aggregator = dispatcher.constructor.aggregator;
+      return session;
     }
   }
 
@@ -1139,8 +1591,13 @@ try {
         return;
       }
       if (session.state !== STATE_STOPPED) {
-        // session.state has not been updated yet
-        return;
+        if (session.mEvents.length > 0 && session.mEvents[session.mEvents.length - 1].type === EVENT_RUN_END) {
+          session.state = STATE_STOPPED;
+        }
+        else {
+          // session.state has not been updated yet
+          return;
+        }
       }
 
       if (phaseState === SESSION_PHASE_STATE_FINAL && lastInScope) {
@@ -2599,8 +3056,15 @@ try {
                 }, 1000);
               }
               else {
-                this.reset(this.state); // TODO: this handling of error unexpectedly hangs up the test run
-                this.error(reason);  
+                const error = new Error(reason);
+                const pseudoSession = Session.generatePseudoNextPhaseSessionOnReadyTimeout(this, error);
+                console.warn(`${this.state}.timeout: supplementing pseudoSession `, pseudoSession);
+                this.state = DISPATCHER_STATE_CLOSED;
+                this.constructor.logSession(pseudoSession, this.suite.suiteIndex, this.suiteParameters.phase);
+                this.constructor.aggregator.checkSessionStatus(pseudoSession);
+                this.constructor.aggregator.proceed('onTimeout');
+                this.reset(this.state);
+                this.next();
               }                
             }
             catch (e) {
@@ -2621,8 +3085,15 @@ try {
               }, 1000);
             }
             else {
-              this.reset(this.state); // TODO: this handling of error unexpectedly hangs up the test run
-              this.error(reason);  
+              const error = new Error(reason);
+              const pseudoSession = Session.generatePseudoPhase0SessionOnReadyTimeout(this, error);
+              console.warn(`${this.state}.timeout: supplementing pseudoSession `, pseudoSession);
+              this.state = DISPATCHER_STATE_CLOSED;
+              this.constructor.logSession(pseudoSession, this.suite.suiteIndex, this.suiteParameters.phase);
+              this.constructor.aggregator.checkSessionStatus(pseudoSession);
+              this.constructor.aggregator.proceed('onTimeout');
+              this.reset(this.state);
+              this.next();
             }
           }
         }
@@ -2651,8 +3122,15 @@ try {
                 }, 1000);
               }
               else {
-                this.reset(this.state); // TODO: this handling of error unexpectedly hangs up the test run
-                this.error(reason);
+                const error = new Error(reason);
+                const pseudoSession = Session.generatePseudoNextPhaseSessionOnReadyTimeout(this, error);
+                console.warn(`${this.state}.timeout: supplementing pseudoSession `, pseudoSession);
+                this.state = DISPATCHER_STATE_CLOSED;
+                this.constructor.logSession(pseudoSession, this.suite.suiteIndex, this.suiteParameters.phase);
+                this.constructor.aggregator.checkSessionStatus(pseudoSession);
+                this.constructor.aggregator.proceed('onTimeout');
+                this.reset(this.state);
+                this.next();
               }
             }
             catch (e) {
@@ -2673,8 +3151,15 @@ try {
               }, 1000);
             }
             else {
-              this.reset(this.state); // TODO: this handling of error unexpectedly hangs up the test run
-              this.error(reason);
+              const error = new Error(reason);
+              const pseudoSession = Session.generatePseudoPhase0SessionOnReadyTimeout(this, error);
+              console.warn(`${this.state}.timeout: supplementing pseudoSession `, pseudoSession);
+              this.state = DISPATCHER_STATE_CLOSED;
+              this.constructor.logSession(pseudoSession, this.suite.suiteIndex, this.suiteParameters.phase);
+              this.constructor.aggregator.checkSessionStatus(pseudoSession);
+              this.constructor.aggregator.proceed('onTimeout');
+              this.reset(this.state);
+              this.next();
             }
           }
         }
