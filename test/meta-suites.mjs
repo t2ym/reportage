@@ -32,9 +32,15 @@ meta.test = (base) => class SpawnTestSuites extends base {
       'test/reportage.config.js',
       'test/close/reportage.config.js',
       'test/empty/reportage.config.js',
+      'test/phased-ready-timeout-noretry/reportage.config.js',
       'test/phased-ready-timeout/reportage.config.js',
+      'test/phased-start-timeout-noretry/reportage.config.js',
+      'test/phased-start-timeout/reportage.config.js',
+      'test/ready-timeout-noretry/reportage.config.js',
       'test/ready-timeout/reportage.config.js',
       'test/single/reportage.config.js',
+      'test/start-timeout/reportage.config.js',
+      'test/successive-ready-timeout-noretry/reportage.config.js',
       'test/successive-ready-timeout/reportage.config.js',
     ]);
 
