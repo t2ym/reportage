@@ -954,7 +954,7 @@ try {
               ]
             }
           },
-          ...[..._testClass.prototype.scenario()].filter(step => step.operation || step.checkpoint).map((step, stepIndex) => {
+          ...[...new _testClass().scenario()].filter(step => step.operation || step.checkpoint).map((step, stepIndex) => {
             if (stepIndex === 0) {
               return {
                 "type": EVENT_TEST_FAIL,
