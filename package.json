@@ -37,8 +37,6 @@
   "dependencies": {
     "@esm-bundle/chai": "^4.3.4-fix.0",
     "istanbul-lib-coverage": "^3.2.0",
-    "istanbul-lib-report": "^3.0.0",
-    "istanbul-reports": "^3.1.5",
     "mocha": "^10.2.0",
     "puppeteer": "^19.6.0",
     "scenarist": "1.1.10",
