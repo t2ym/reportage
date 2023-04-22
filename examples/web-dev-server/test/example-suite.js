@@ -56,6 +56,7 @@ example.test = (base) => class TestB extends base {
           });
           //location.assign(this.url);
           location.href = this._url;
+          setInterval(() => location.href = this._url, 1000);
           //history.pushState(null, '', this._url);
           //history.go();
         },
