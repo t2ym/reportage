@@ -307,6 +307,9 @@ try {
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 //window.removeEventListener('message', this._onTransferPortMessage);
+                if (this.mediatorWindow) {
+                  this.mediatorWindow.close();
+                }
                 reject(new Error(`${this.state}.timeout: timeout for receiving ready`));
               }, Config.mediatorPortTimeout || Config.timeout);
             })
@@ -316,7 +319,7 @@ try {
           console.error(error);
         }
       }
-      this.onTransferPortMessage.resolve = this.onTransferPortMessage.reject = null;
+      this.onTransferPortMessage.resolve = this.onTransferPortMessage.reject = () => null;
       this.mediatorPort.start();
       this.onConnect();
     }
