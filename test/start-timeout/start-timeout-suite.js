@@ -5,7 +5,7 @@ Copyright (c) 2023 Tetsuya Mori <t2y3141592@gmail.com>. All rights reserved.
 import Config from './reportage.config.js'; // test suites know its config path
 if (location.origin !== Config.reporterOrigin) {
   const LOCAL_STORAGE_START_TIMEOUT_FAIL_COUNTER = 'LocalStorage:failcounter';
-  const MAX_FAILURES = 3;
+  const MAX_FAILURES = 4;
   let counter = parseInt(localStorage.getItem(LOCAL_STORAGE_START_TIMEOUT_FAIL_COUNTER) || '0');
   if (counter < MAX_FAILURES) {
     console.log(`start-timeout-suite.js: counter ${counter} < MAX_FAILURES ${MAX_FAILURES}`)
