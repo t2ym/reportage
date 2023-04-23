@@ -6,6 +6,7 @@ Copyright (c) 2023 Tetsuya Mori <t2y3141592@gmail.com>. All rights reserved.
 const _global = globalThis;
 const sandbox = Object.create(_global);
 let _onerror = null; // for mocha-es2018.js, onerror is the only global getter/setter property that has to be confined in the sandbox
+let _wrappedOnError = null;
 Object.defineProperty(sandbox, 'onerror', {
   configurable: true,
   enumerable: true,
@@ -14,13 +15,18 @@ Object.defineProperty(sandbox, 'onerror', {
   },
   set(value) {
     if (_onerror) {
-      _global.removeEventListener('error', _onerror);
+      _global.removeEventListener('error', _wrappedOnError);
     }
     /* istanbul ignore else */
     if (value) {
-      _global.addEventListener('error', value);
+      _onerror = value;
+      _wrappedOnError = (errorEvent) => {
+        const { message, filename, lineno, colno, error } = errorEvent;
+        return _onerror(message, filename, lineno, colno, error);
+      };
+      _global.addEventListener('error', _wrappedOnError);
     }
-    return _onerror = value;
+    return _onerror;
   },
 });
 const _globalThis = new Proxy(_global, {
