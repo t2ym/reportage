@@ -42,6 +42,7 @@ meta.test = (base) => class SpawnTestSuites extends base {
       'test/start-timeout/reportage.config.js',
       'test/successive-ready-timeout-noretry/reportage.config.js',
       'test/successive-ready-timeout/reportage.config.js',
+      'test/uncaught-exception/reportage.config.js',
     ]);
 
     test.stdout.on('data', (data) => {
