@@ -501,6 +501,7 @@ try {
     }
     createChannel() {
       const channel = new MessageChannel();
+      this.port = channel.port1;
       channel.port1.onmessage = (event) => {
         //const latency = Date.now() - event.data.sent;
         //console.warn(`message latency: ${latency}`);
@@ -3405,11 +3406,15 @@ try {
     }
     detach() {
       if (this.origin) {
+        if (this.session && this.session.port) {
+          this.session.port.close();
+        }
         const bridgeName = NAME_MEDIATOR_BRIDGE + ':' + this.origin;
         const message = {
           type: TYPE_DETACH,
           source: NAME_REPORTER,
           target: bridgeName,
+          pageId: this.pageId || null,
         };
         console.log(`Dispatcher: sending message`, message);
         this.constructor.port.postMessage(message);

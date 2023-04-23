@@ -377,6 +377,14 @@ try {
     onMessage(event) {
       //console.log(`Driver.onMessage: `, event.data);
       const { type } = event.data;
+      switch (type) {
+      case TYPE_ERROR:
+        if (event.data.source === NAME_MEDIATOR && event.data.errorMessage === 'Error: source is blocked') {
+          console.error(`Driver.onMessage: ${type} ${event.data.errorMessage}`);
+          this.disconnect();
+        }
+        return;
+      }
       switch (this.state) {
       case DRIVER_STATE_READY:
         switch (type) {

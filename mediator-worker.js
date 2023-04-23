@@ -14,6 +14,7 @@ import {
   TYPE_DISCONNECT,
   TYPE_COVERAGE,
   TYPE_COLLECT_COVERAGE,
+  TYPE_DETACH,
 } from './mediator-constants.js';
 */
 /* 
@@ -34,9 +35,11 @@ const TYPE_DISCONNECT = 'disconnect';
 const TYPE_COVERAGE = 'coverage';
 const TYPE_COLLECT_COVERAGE = 'collectCoverage';
 const TYPE_TRANSFER_PORT = 'transferMediatorPort';
+const TYPE_DETACH = 'detach'
 //*/
 
 const nameToPortMap = {};
+const blockedPageId = {};
 const coverages = [];
 
 onconnect = function (connectEvent) {
@@ -92,6 +95,12 @@ onconnect = function (connectEvent) {
             }
             if (typeof source === 'string' && source) {
               delete nameToPortMap[source];
+              delete blockedPageId[source];
+            }
+          }
+          else if (type === TYPE_DETACH) {
+            if (event.data.pageId) {
+              blockedPageId[event.data.pageId] = true;
             }
           }
           else if (type === TYPE_COVERAGE) {
@@ -110,6 +119,10 @@ onconnect = function (connectEvent) {
           }
           if (typeof target === 'string' && target &&
               target !== NAME_MEDIATOR) {
+            if (type !== TYPE_COLLECT_COVERAGE && type !== TYPE_COVERAGE && blockedPageId[source]) {
+              console.warn(`${type}: discarding blocked source ${source}`);
+              throw new Error('source is blocked');
+            }
             // inter-port routing
             let targetPort = nameToPortMap[target];
             if (targetPort instanceof MessagePort) {
