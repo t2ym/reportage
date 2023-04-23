@@ -1,6 +1,6 @@
 {
   "name": "reportage",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Scenarist-wrapped mocha sessions on browsers to any reporters",
   "main": "cli.mjs",
   "type": "module",
