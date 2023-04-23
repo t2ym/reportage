@@ -228,6 +228,7 @@ export function reporterInstaller(Mocha, Config) {
     start(runner, options) {
       this.reporterOrigin = options.reporterOptions.reporterOrigin;
       this.pendingQueue = [];
+      this.mochaTestIdInventory = {};
       this.port = options.reporterOptions.port;
       options.reporterOptions.port = null;
       this.onTransferPort(this.port);
@@ -410,6 +411,11 @@ export function reporterInstaller(Mocha, Config) {
         }
       }
       else if (arg instanceof Mocha.Test) {
+        const id = arg.__mocha_id__;
+        if (id && this.mochaTestIdInventory[id]) {
+          return; // skip enqueueing redundant tests such as unhandled exceptions
+        }
+        this.mochaTestIdInventory[id] = eventType;
         let err = arg.err;
         if (err) {
           err = {
