@@ -306,6 +306,10 @@ try {
             }),
             new Promise((resolve, reject) => {
               setTimeout(() => {
+                if (this.mediatorPort) {
+                  resolve(this.mediatorPort); // the resolved value is not used
+                  return;
+                }
                 //window.removeEventListener('message', this._onTransferPortMessage);
                 if (this.mediatorWindow) {
                   this.mediatorWindow.close();
